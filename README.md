@@ -30,5 +30,5 @@ https://www.youtube.com/watch?v=ACvXAjZE9jQ
 To change to custom series that was inputted via option 1, in drawSeries.py, uncomment line 16, comment line 17.
 It would look like this:
 
-theCoefficientList = cf.comLater(number_of_circles, win_width, win_height)   # the list of coefficients for each circle, n -> 0 to +/- incrementing n    -> c0, c1, c-1, c2, c-2
-#theCoefficientList = fn.cordListGenerate(-150) # precreated coefficients for a nice heart
+16 - theCoefficientList = cf.comLater(number_of_circles, win_width, win_height)   # the list of coefficients for each circle, n -> 0 to +/- incrementing n    -> c0, c1, c-1, c2, c-2
+17 - #theCoefficientList = fn.cordListGenerate(-150) # precreated coefficients for a nice heart
