@@ -7,7 +7,7 @@ pg.init() # initilise pygame to avoid some potential problems
 
 def drawSeries():
     win_width, win_height, run = 1000, 600, True    # declare window size, run state
-    number_of_circles = 101
+    number_of_circles = 1500
 
     win = pg.display.set_mode((win_width, win_height)) # set the window size
     pg.display.set_caption("Stuff")                    # set window title
@@ -17,7 +17,7 @@ def drawSeries():
 
     t = 0                                           # keeps a track of the time variable
     max_t = 0
-    t_increase = 0.001                              # how much will t increase every run, less the more accurate
+    t_increase = 0.0001                              # how much will t increase every run, less the more accurate
     pointsList = []                                 # the list of points of the equation as t varies from 0 to 1
 
     FPS = pg.time.Clock() # clock object is used to set fps
@@ -66,11 +66,12 @@ def drawSeries():
         for i, color in enumerate(pointsList):
             # set the pixel at given term
             coof = (max_t - i / total_points)
+            # coof = 0
             win.set_at((floor(color.real), floor(color.imag)), (50 - 35 * coof, 190 - 175 * coof, 145 - 130 * coof) )
 
         
         pg.display.update()     # update the screen rendering
-        FPS.tick(100)            # set fps
+        # FPS.tick(100)            # set fps
     pg.quit()
 
     finalEquation = ""      # the final equation created by the fourier series

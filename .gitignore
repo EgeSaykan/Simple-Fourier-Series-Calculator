@@ -1,1 +1,3 @@
 /__pycache__
+deploy.prototxt
+hed_pretrained_bsds.caffemodel
