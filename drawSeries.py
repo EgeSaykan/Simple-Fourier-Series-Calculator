@@ -1,4 +1,4 @@
-from math import floor, ceil
+from math import floor, ceil, e, pi
 from os.path import dirname
 import pygame as pg #import pygame (if not installed already: pip3 install pygame)
 import coefficientMaker as cf
@@ -6,17 +6,17 @@ import functions as fn
 pg.init() # initilise pygame to avoid some potential problems
 
 def drawSeries():
-    e, pi = 2.718281828459045, 3.14159265358979     # define absulute constants
     win_width, win_height, run = 1000, 600, True    # declare window size, run state
     number_of_circles = 101
 
     win = pg.display.set_mode((win_width, win_height)) # set the window size
     pg.display.set_caption("Stuff")                    # set window title
 
-    #theCoefficientList = cf.comLater(number_of_circles, win_width, win_height)   # the list of coefficients for each circle, n -> 0 to +/- incrementing n    -> c0, c1, c-1, c2, c-2
-    theCoefficientList = fn.cordListGenerate(-150) # precreated coefficients for a nice heart
+    theCoefficientList = cf.comLater(number_of_circles, win_width, win_height)   # the list of coefficients for each circle, n -> 0 to +/- incrementing n    -> c0, c1, c-1, c2, c-2
+    # theCoefficientList = fn.cordListGenerate(-150) # precreated coefficients for a nice heart
 
     t = 0                                           # keeps a track of the time variable
+    max_t = 0
     t_increase = 0.001                              # how much will t increase every run, less the more accurate
     pointsList = []                                 # the list of points of the equation as t varies from 0 to 1
 
@@ -53,14 +53,22 @@ def drawSeries():
             
             if i == len(theCoefficientList) - 1 and len(pointsList) + 1 <= 1 / t_increase:   pointsList.append(total)   # append the point to the list if it is at the end
         
-        
-        # loop through every point and draw them on the screen
-        for color in range(len(pointsList)):
-            # set the pixel at given term
-            win.set_at((floor(pointsList[color].real), floor(pointsList[color].imag)), (50, 190, 145))
-
         t += t_increase     # increment t
-        if t >= 1: t = 0    # if t is i set it back to 0 for an infinate loop
+        if t >= 1: 
+            t = 0    # if t is i set it back to 0 for an infinate loop
+        if max_t >= 1:
+            pointsList.pop(0)
+        else:
+            max_t += t_increase # increment max_t to check if t has reached 1
+
+        # loop through every point and draw them on the screen
+        total_points = 1 / t_increase
+        for i, color in enumerate(pointsList):
+            # set the pixel at given term
+            coof = (max_t - i / total_points)
+            win.set_at((floor(color.real), floor(color.imag)), (50 - 35 * coof, 190 - 175 * coof, 145 - 130 * coof) )
+
+        
         pg.display.update()     # update the screen rendering
         FPS.tick(100)            # set fps
     pg.quit()
