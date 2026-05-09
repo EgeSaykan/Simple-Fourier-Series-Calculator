@@ -44,8 +44,8 @@ def find_faces(image_path="hmm.jpg"):
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
     print(f"Detected {len(faces)} faces.")
     image = cv.resize(image, (0, 0), fx=0.5, fy=0.5) # Resize for faster processing
-    h, w = image.shape[:2]
-    image = image[80: h // 2 + 280, :w]
+    # h, w = image.shape[:2]
+    # image = image[80: h // 2 + 280, :w]
 
     # Load HED model
     prototxt_path = "deploy.prototxt"
@@ -65,20 +65,27 @@ def find_faces(image_path="hmm.jpg"):
     edges_hed = net.forward()
     edges_hed = edges_hed[0, 0]
     edges_hed = (edges_hed * 255).astype(np.uint8)
+    cv.imshow("HED Edges", edges_hed)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
     
     # Process low detail (background)
-    edges_low_detail = cv.GaussianBlur(edges_hed, (5, 5), 0)
-    edges_low_detail = cv.threshold(edges_low_detail, 80, 255, cv.THRESH_BINARY)[1]
+    edges_low_detail = cv.GaussianBlur(edges_hed, (3, 3), 0)
+    edges_low_detail = edges_hed.copy()
+    edges_low_detail = cv.threshold(edges_low_detail, 80, 155, cv.THRESH_BINARY)[1]
     
     # Process high detail (faces)
     edges_high_detail = edges_hed.copy()
-    edges_high_detail = cv.threshold(edges_high_detail, 30, 255, cv.THRESH_BINARY)[1]
+    edges_high_detail = cv.threshold(edges_high_detail, 10, 155, cv.THRESH_BINARY)[1]
     
     # Combine the layers
     result_edges = edges_low_detail.copy()
     for (x, y, w, h) in faces:
         result_edges[y:y+h, x:x+w] = edges_high_detail[y:y+h, x:x+w]
-    
+    cv.imshow("Combined Edges", result_edges)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+    cv.imwrite("faces_with_detail.jpg", result_edges) # Save the combined edges image
     print("Applying thinning algorithm...")
     # The image must be strictly binary (0 or 255) for thinning
     # We use THINNING_ZHANGSUEN, which is fast and reliable
@@ -91,13 +98,14 @@ def find_faces(image_path="hmm.jpg"):
 
 if __name__ == "__main__":
     try:
-        image, faces = find_faces()
+        image, faces = find_faces("table.jpg")
         
         # Resize for display (adjust fx/fy if the window is too big/small)
-        display_image = cv.resize(image, None, fx=0.5, fy=0.5)
+        # display_image = cv.resize(image, None, fx=0.5, fy=0.5)
+        display_image = image
         
         cv.imshow("Faces with Detail", display_image)
-        cv.imwrite("faces_with_detail.jpg", image) # Save the full resolution version
+        # cv.imwrite("faces_with_detail.jpg", image) # Save the full resolution version
         cv.waitKey(0)
         cv.destroyAllWindows()
         
