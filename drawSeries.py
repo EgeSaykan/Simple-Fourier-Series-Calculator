@@ -1,4 +1,5 @@
 from math import floor, ceil, e, pi
+import os
 from os.path import dirname
 import pygame as pg #import pygame (if not installed already: pip3 install pygame)
 import coefficientMaker as cf
@@ -23,6 +24,10 @@ def drawSeries():
     max_t = 0
     t_increase = 0.00005                              # how much will t increase every run, less the more accurate
     pointsList = []                                 # the list of points of the equation as t varies from 0 to 1
+
+    output_dir = "rendered_frames"
+    os.makedirs(output_dir, exist_ok=True)
+    frame_count = 0
 
     FPS = pg.time.Clock() # clock object is used to set fps
     while run: # loop to keep the window open
@@ -96,6 +101,17 @@ def drawSeries():
         
         pg.display.update()     # update the screen rendering
         # FPS.tick(100)            # set fps
+
+
+        if max_t <= 1.0:
+            filename = os.path.join(output_dir, f"frame_{frame_count:05d}.png")
+            pg.image.save(win, filename)
+            frame_count += 1
+        else:
+            print("Rendering complete!")
+            run = False
+
+
     pg.quit()
 
 
