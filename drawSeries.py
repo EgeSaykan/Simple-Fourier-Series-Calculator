@@ -3,11 +3,13 @@ from os.path import dirname
 import pygame as pg #import pygame (if not installed already: pip3 install pygame)
 import coefficientMaker as cf
 import functions as fn
+import numpy as np
+
 pg.init() # initilise pygame to avoid some potential problems
 
 def drawSeries():
     win_width, win_height, run = 1000, 600, True    # declare window size, run state
-    number_of_circles = 1500
+    number_of_circles = 15000
 
     win = pg.display.set_mode((win_width, win_height)) # set the window size
     pg.display.set_caption("Stuff")                    # set window title
@@ -34,24 +36,18 @@ def drawSeries():
 
         total = win_width * 0.5 + win_height * 0.5j # keeps a track of there to add the next circle
 
-        for i, coef in enumerate(theCoefficientList): # iterate through each circle
-            firstCordTemporary = total
-            if i % 2 == 0:
-                thiscoef = 1j*  2*pi * (i / -2) * t     # exponent of clockwise circles and 0 circle
-                total += e**(thiscoef) * coef           # the cumilitive centre of the circles
-                
-                pg.draw.circle(win, (111, 49, 118), (total.real, total.imag), abs(coef), 1)   # draw the circles (purple)
-                pg.draw.line(win, (161, 89, 168), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)   # draw the lines (purple)
-
-            else:
-                thiscoef = 1j*  2*pi * ((i + 1) // 2) * t   # exponent of anticlockwise circles and 0 circle
-                total += e**(thiscoef) * coef               # the cumilitive centre of the circles
-                #arg = cm.phase(e**(thiscoef))               # argument of the exponent
-                
-                pg.draw.circle(win, (57, 32, 138), (total.real, total.imag), abs(coef), 1)   # draw the circles (blue)
-                pg.draw.line(win, (97, 72, 198), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)   # draw the lines (blue)
-            
-            if i == len(theCoefficientList) - 1 and len(pointsList) + 1 <= 1 / t_increase:   pointsList.append(total)   # append the point to the list if it is at the end
+        # Vectorized computation of all circle contributions
+        i_indices = np.arange(len(theCoefficientList))
+        even_mask = (i_indices % 2 == 0)
+        
+        # Compute exponent multipliers based on even/odd pattern
+        exponent_mult = np.where(even_mask, i_indices / -2, (i_indices + 1) // 2)
+        
+        # Compute all exponents and sum contributions
+        exponents = 1j * 2 * pi * exponent_mult * t
+        total += np.sum(np.exp(exponents) * theCoefficientList)
+        
+        if len(pointsList) + 1 <= 1 / t_increase:   pointsList.append(total)   # append the point to the list
         
         t += t_increase     # increment t
         if t >= 1: 

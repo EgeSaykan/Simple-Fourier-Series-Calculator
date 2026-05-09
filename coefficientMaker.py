@@ -35,11 +35,10 @@ def getCoordinates(winW, winH):
     # plot as dots instead of a connected line
     
     numpy_array = real_parts + 1j * imag_parts
-    text = list(numpy_array)
     
     # Save visualization of points
     fig, ax = plt.subplots(figsize=(10, 10))
-    coords = text[::-3]
+    coords = numpy_array[::-1]
     real_vals = [c.real for c in coords]
     imag_vals = [c.imag for c in coords]
     ax.plot(real_vals, imag_vals, 'b-', linewidth=0.5, alpha=0.7)
@@ -51,7 +50,7 @@ def getCoordinates(winW, winH):
     plt.savefig(f"{dirname(__file__)}/txtfiles/point_to_plot.png", dpi=100, bbox_inches='tight')
     plt.close()
     
-    return text[::-1]
+    return numpy_array[::-1]
 
 
 
@@ -59,13 +58,18 @@ def comLater(numberOfCircles, winW, winH):
     cordList = getCoordinates(winW, winH)
     if len(cordList) < numberOfCircles:
         numberOfCircles = len(cordList)
-    coef = []
     
-    for m in range(numberOfCircles):
-        sum = 0
-        circleN = ceil(m / 2) * ((e**((m+1) * pi * 1j)).real)# hack to give the pattern 0, 1, -1, 2, -2....
-        for i in range(len(cordList)):    
-            sum += cordList[i] * e**(2*pi * 1j * (i / len(cordList)) * circleN)
-        sum /= len(cordList)
-        coef.append(sum)
+    # Vectorized computation using numpy
+    m_values = np.arange(numberOfCircles)
+    circleN_values = np.ceil(m_values / 2) * ((e**((m_values + 1) * pi * 1j)).real)
+    
+    # Create index array for vectorized exponent calculation
+    indices = np.arange(len(cordList))
+    
+    # Compute exponentials with shape (numberOfCircles, len(cordList))
+    exponentials = e**(2*pi * 1j * (indices / len(cordList)) * circleN_values[:, np.newaxis])
+    
+    # Vectorized sum and averaging
+    coef = np.sum(cordList * exponentials, axis=1) / len(cordList)
+    
     return coef
