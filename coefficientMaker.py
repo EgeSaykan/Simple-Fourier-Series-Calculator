@@ -10,6 +10,7 @@ from math import ceil
 from os.path import dirname
 import numpy as np
 import matplotlib.pyplot as plt
+import re
 
 e, pi = 2.718281828459045, 3.14159265358979     # define absulute constants
 
@@ -52,7 +53,16 @@ def getCoordinates(winW, winH):
     
     return numpy_array[::-1]
 
+def read_coefficients_from_file():
+    with open(f"{dirname(__file__)}\\txtfiles\\finalequation.txt", "r") as f:
+        text = f.read()
+    # Extract complex numbers in parentheses using regex
+    pattern = r'\(([^)]+)\)'
+    matches = re.findall(pattern, text)
+    coefficients = np.array([complex(m) for m in matches])
+    return coefficients
 
+print(read_coefficients_from_file())
 
 def comLater(numberOfCircles, winW, winH):
     cordList = getCoordinates(winW, winH)
