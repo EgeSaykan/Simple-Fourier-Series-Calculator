@@ -60,7 +60,7 @@ def read_coefficients_from_file():
     coefficients = np.array([complex(c[0], c[1]) for c in data])
     return coefficients
 
-print(read_coefficients_from_file())
+# print(read_coefficients_from_file())
 
 def comLater(numberOfCircles, winW, winH, saveToFile=True):
     cordList = getCoordinates(winW, winH)
@@ -81,7 +81,7 @@ def comLater(numberOfCircles, winW, winH, saveToFile=True):
     coef = np.sum(cordList * exponentials, axis=1) / len(cordList)
 
     if saveToFile:
-        with open(f"{dirname(__file__)}/txtfiles/coefficients.json", "w") as f:
+        with open(f"{dirname(__file__)}\\txtfiles\\coefficients.json", "w") as f:
             json.dump([[float(c.real), float(c.imag)] for c in coef], f)
 
     
