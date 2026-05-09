@@ -32,7 +32,7 @@ def getCoordinates(winW, winH):
     imag_parts = np.imag(numpy_array)
     max_real = np.max(np.abs(real_parts))
     max_imag = np.max(np.abs(imag_parts))
-    real_parts = real_parts / max_real * winW*1.5 - winW * 0.5
+    real_parts = real_parts / max_real * winW*1.8 - winW * 0.5
     imag_parts = imag_parts / max_imag * winH - winH * 0.15
     # plot as dots instead of a connected line
     
@@ -67,18 +67,25 @@ def comLater(numberOfCircles, winW, winH, saveToFile=True):
     if len(cordList) < numberOfCircles:
         numberOfCircles = len(cordList)
     
-    # Vectorized computation using numpy
-    m_values = np.arange(numberOfCircles)
-    circleN_values = np.ceil(m_values / 2) * ((e**((m_values + 1) * pi * 1j)).real)
+    coef = np.zeros(numberOfCircles, dtype=complex)
+    batch_size = 5000
     
-    # Create index array for vectorized exponent calculation
-    indices = np.arange(len(cordList))
-    
-    # Compute exponentials with shape (numberOfCircles, len(cordList))
-    exponentials = e**(2*pi * 1j * (indices / len(cordList)) * circleN_values[:, np.newaxis])
-    
-    # Vectorized sum and averaging
-    coef = np.sum(cordList * exponentials, axis=1) / len(cordList)
+    # Process in batches of 5000 to avoid memory issues
+    for batch_start in range(0, numberOfCircles, batch_size):
+        batch_end = min(batch_start + batch_size, numberOfCircles)
+        
+        # Vectorized computation for this batch
+        m_values = np.arange(batch_start, batch_end)
+        circleN_values = np.ceil(m_values / 2) * ((e**((m_values + 1) * pi * 1j)).real)
+        
+        # Create index array for vectorized exponent calculation
+        indices = np.arange(len(cordList))
+        
+        # Compute exponentials with shape (batch_size, len(cordList))
+        exponentials = e**(2*pi * 1j * (indices / len(cordList)) * circleN_values[:, np.newaxis])
+        
+        # Vectorized sum and averaging for this batch
+        coef[batch_start:batch_end] = np.sum(cordList * exponentials, axis=1) / len(cordList)
 
     if saveToFile:
         with open(f"{dirname(__file__)}\\txtfiles\\coefficients.json", "w") as f:

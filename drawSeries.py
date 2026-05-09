@@ -10,7 +10,7 @@ pg.init() # initilise pygame to avoid some potential problems
 
 def drawSeries():
     win_width, win_height, run = 1000, 600, True    # declare window size, run state
-    number_of_circles = 20000
+    number_of_circles = 25000
 
     surface = pg.Surface((win_width, win_height), pg.SRCALPHA)
     win = pg.display.set_mode((win_width, win_height), pg.SRCALPHA) # set the window size with alpha support
@@ -103,11 +103,11 @@ def drawSeries():
         # FPS.tick(100)            # set fps
 
 
-        if max_t <= 1.0:
+        if 1.0 < max_t <= 2.0:
             filename = os.path.join(output_dir, f"frame_{frame_count:05d}.png")
             pg.image.save(win, filename)
             frame_count += 1
-        else:
+        elif max_t > 2.0:
             print("Rendering complete!")
             run = False
 
