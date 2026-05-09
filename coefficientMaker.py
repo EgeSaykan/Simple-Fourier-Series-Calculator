@@ -32,7 +32,7 @@ def getCoordinates(winW, winH):
     imag_parts = np.imag(numpy_array)
     max_real = np.max(np.abs(real_parts))
     max_imag = np.max(np.abs(imag_parts))
-    real_parts = real_parts / max_real * winW*1.5 - winW * 0.6
+    real_parts = real_parts / max_real * winW*1.5 - winW * 0.5
     imag_parts = imag_parts / max_imag * winH - winH * 0.15
     # plot as dots instead of a connected line
     

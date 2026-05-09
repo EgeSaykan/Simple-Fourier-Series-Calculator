@@ -11,6 +11,7 @@ def drawSeries():
     win_width, win_height, run = 1000, 600, True    # declare window size, run state
     number_of_circles = 20000
 
+    surface = pg.Surface((win_width, win_height), pg.SRCALPHA)
     win = pg.display.set_mode((win_width, win_height), pg.SRCALPHA) # set the window size with alpha support
     pg.display.set_caption("Stuff")                    # set window title
 
@@ -33,6 +34,8 @@ def drawSeries():
 
         
         win.fill((15, 15, 15, 255)) # set all the window black/grey
+        surface.fill((0, 0, 0, 0))
+        win.blit(surface, (0, 0)) # blit the surface on the window to clear the previous circles and lines but keep the points
 
 
         total = win_width * 0.5 + win_height * 0.5j # keeps a track of there to add the next circle
@@ -53,25 +56,25 @@ def drawSeries():
         total = win_width * 0.5 + win_height * 0.5j # keeps a track of there to add the next circle
         for i, coef in enumerate(theCoefficientList[:150]): # iterate through each circle
             # Calculate progressively more transparent alpha
-            alpha = int(255 * (150 - i) / 150)
-            alpha = 0
+            alpha = int((240*(150-i)) / 150)
             
             firstCordTemporary = total
             if i % 2 == 0:
                 thiscoef = 1j*  2*pi * (i / -2) * t     # exponent of clockwise circles and 0 circle
                 total += e**(thiscoef) * coef           # the cumilitive centre of the circles
 
-                pg.draw.circle(win, (111, 49, 118, alpha), (total.real, total.imag), abs(coef), 1)   # draw the circles (purple)
-                pg.draw.line(win, (161, 89, 168, alpha), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)   # draw the lines (purple)
+                # 2. Draw on temp_surface instead of win
+                pg.draw.circle(surface, (111, 49, 118, alpha), (total.real, total.imag), abs(coef), 1)
+                pg.draw.line(surface, (161, 89, 168, alpha), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)
 
             else:
-                thiscoef = 1j*  2*pi * ((i + 1) // 2) * t   # exponent of anticlockwise circles and 0 circle
-                total += e**(thiscoef) * coef               # the cumilitive centre of the circles
-                #arg = cm.phase(e**(thiscoef))               # argument of the exponent
-
-                pg.draw.circle(win, (57, 32, 138, alpha), (total.real, total.imag), abs(coef), 1)   # draw the circles (blue)
-                pg.draw.line(win, (97, 72, 198, alpha), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)   # draw the lines (blue)
-
+                thiscoef = 1j * 2 * pi * ((i + 1) // 2) * t
+                total += e**(thiscoef) * coef
+                
+                # 2. Draw on temp_surface instead of win
+                pg.draw.circle(surface, (57, 32, 138, alpha), (total.real, total.imag), abs(coef), 1)
+                pg.draw.line(surface, (97, 72, 198, alpha), (firstCordTemporary.real, firstCordTemporary.imag), (total.real, total.imag), 2)
+        win.blit(surface, (0, 0))
         
         
         t += t_increase     # increment t
