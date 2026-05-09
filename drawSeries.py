@@ -88,16 +88,6 @@ def drawSeries():
         # FPS.tick(100)            # set fps
     pg.quit()
 
-    finalEquation = ""      # the final equation created by the fourier series
-    for i, m in enumerate(theCoefficientList):
-        if i != 0: forecast = " + "
-        else: forecast = ''
-        circleN = ceil(i / 2) * ((e**((i+1) * pi * 1j)).real)# hack to give the pattern 0, 1, -1, 2, -2....
-        print(f'{forecast}{m} * e^(2pi * i * {str(round(circleN))} * t)')
-        finalEquation += (f'{forecast}{m} * e^(2pi * i * {str(round(circleN))} * t)')
-    print("\n\n")
-    
-    with open(f"{dirname(__file__)}/txtfiles/finalequation.txt", "w") as f:
-        f.write(finalEquation)
+
 
 

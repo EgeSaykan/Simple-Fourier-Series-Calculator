@@ -11,6 +11,7 @@ from os.path import dirname
 import numpy as np
 import matplotlib.pyplot as plt
 import re
+import json
 
 e, pi = 2.718281828459045, 3.14159265358979     # define absulute constants
 
@@ -54,17 +55,14 @@ def getCoordinates(winW, winH):
     return numpy_array[::-1]
 
 def read_coefficients_from_file():
-    with open(f"{dirname(__file__)}\\txtfiles\\finalequation.txt", "r") as f:
-        text = f.read()
-    # Extract complex numbers in parentheses using regex
-    pattern = r'\(([^)]+)\)'
-    matches = re.findall(pattern, text)
-    coefficients = np.array([complex(m) for m in matches])
+    with open(f"{dirname(__file__)}/txtfiles/coefficients.json", "r") as f:
+        data = json.load(f)
+    coefficients = np.array([complex(c[0], c[1]) for c in data])
     return coefficients
 
 print(read_coefficients_from_file())
 
-def comLater(numberOfCircles, winW, winH):
+def comLater(numberOfCircles, winW, winH, saveToFile=True):
     cordList = getCoordinates(winW, winH)
     if len(cordList) < numberOfCircles:
         numberOfCircles = len(cordList)
@@ -81,5 +79,12 @@ def comLater(numberOfCircles, winW, winH):
     
     # Vectorized sum and averaging
     coef = np.sum(cordList * exponentials, axis=1) / len(cordList)
+
+    if saveToFile:
+        with open(f"{dirname(__file__)}/txtfiles/coefficients.json", "w") as f:
+            json.dump([[float(c.real), float(c.imag)] for c in coef], f)
+
+    
     
     return coef
+
