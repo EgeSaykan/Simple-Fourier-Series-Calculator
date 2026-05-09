@@ -65,6 +65,18 @@ def find_faces(image_path="hmm.jpg"):
     edges_hed = net.forward()
     edges_hed = edges_hed[0, 0]
     edges_hed = (edges_hed * 255).astype(np.uint8)
+    edges_hed = np.where(edges_hed > 50, 255, 0).astype(np.uint8)
+
+    white_coords = np.argwhere(edges_hed == 255)
+    white_count = len(white_coords)
+    target_white_count = white_count // 3
+    if white_count > target_white_count:
+        keep_idx = np.random.choice(white_count, size=target_white_count, replace=False)
+        keep_coords = white_coords[keep_idx]
+        reduced_edges = np.zeros_like(edges_hed, dtype=np.uint8)
+        reduced_edges[keep_coords[:, 0], keep_coords[:, 1]] = 255
+        edges_hed = reduced_edges
+    
     cv.imshow("HED Edges", edges_hed)
     cv.waitKey(0)
     cv.destroyAllWindows()

@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 
-def extract_white_pixels(image_path, output_path, white_threshold=250):
+def extract_white_pixels(image_path, output_path, white_threshold=200):
     """
     Extract white pixel coordinates from an image and save to a file.
     
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     image_path = "image_cleaned.jpg"
     output_path = "txtfiles/points.txt"
     
-    extract_white_pixels(image_path, output_path)
+    extract_white_pixels(image_path, output_path, 100)
