@@ -110,7 +110,7 @@ def find_faces(image_path="hmm.jpg"):
 
 if __name__ == "__main__":
     try:
-        image, faces = find_faces("table.jpg")
+        image, faces = find_faces("three.jpeg")
         
         # Resize for display (adjust fx/fy if the window is too big/small)
         # display_image = cv.resize(image, None, fx=0.5, fy=0.5)

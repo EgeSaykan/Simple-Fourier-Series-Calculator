@@ -22,7 +22,7 @@ def drawSeries():
 
     t = 0                                           # keeps a track of the time variable
     max_t = 0
-    t_increase = 0.00005                              # how much will t increase every run, less the more accurate
+    t_increase = 0.00005                            # how much will t increase every run, less the more accurate
     pointsList = []                                 # the list of points of the equation as t varies from 0 to 1
 
     output_dir = "rendered_frames"
@@ -83,12 +83,15 @@ def drawSeries():
         
         
         t += t_increase     # increment t
-        if t >= 1: 
-            t = 0    # if t is i set it back to 0 for an infinate loop
         if max_t >= 1:
             pointsList.pop(0)
+            if t >= 1:
+                print("Rendering complete!")
+                run = False
         else:
             max_t += t_increase # increment max_t to check if t has reached 1
+        if t >= 1: 
+            t = 0    # if t is i set it back to 0 for an infinate loop
 
         # loop through every point and draw them on the screen
         total_points = 1 / t_increase
@@ -103,13 +106,10 @@ def drawSeries():
         # FPS.tick(100)            # set fps
 
 
-        if 1.0 < max_t <= 2.0:
+        if max_t >= 1:
             filename = os.path.join(output_dir, f"frame_{frame_count:05d}.png")
             pg.image.save(win, filename)
             frame_count += 1
-        elif max_t > 2.0:
-            print("Rendering complete!")
-            run = False
 
 
     pg.quit()

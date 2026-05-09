@@ -36,7 +36,7 @@ def nearest_neighbor_tsp_grid(points):
     print("Using grid-based greedy construction...")
     
     # Determine grid size based on point count
-    grid_size = 100  # pixels
+    grid_size = 20  # pixels
     
     # Create grid buckets
     grid = {}
