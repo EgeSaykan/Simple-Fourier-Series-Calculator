@@ -56,7 +56,7 @@ def drawSeries():
         total = win_width * 0.5 + win_height * 0.5j # keeps a track of there to add the next circle
         for i, coef in enumerate(theCoefficientList[:150]): # iterate through each circle
             # Calculate progressively more transparent alpha
-            alpha = int((240*(150-i)) / 150)
+            alpha = int((200*(150-i)) / 250)
             
             firstCordTemporary = total
             if i % 2 == 0:
